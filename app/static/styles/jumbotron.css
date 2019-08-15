@@ -1,0 +1,31 @@
+/* Move down content because we have a fixed navbar that is 50px tall */
+body {
+	padding-top: 2rem;
+}
+
+div.container {
+	margin: auto;
+	height: 300px;
+}
+
+div.col-md-4 {
+	margin-left: auto;
+	margin-right: auto;
+	width: 500px;
+}
+
+canvas {
+	width: 1000px;
+	height: 1000px;
+}
+
+ul.flashes {
+	color: black;
+	list-style-type: none;
+	font-size: xx-large;
+	text-align: center;
+	font-family: "Garamond";
+	vertical-align: bottom;
+	margin-top:100px;
+}
+

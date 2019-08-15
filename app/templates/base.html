@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+		<meta name="description" content="">
+		<meta name="author" content="">
+		<link rel="icon" href="../../favicon.ico">
+
+		<title>Jumbotron Template for Bootstrap</title>
+
+		<!-- Bootstrap core CSS -->
+		<link href="{{ url_for('static', filename='styles/bootstrap.min.css') }}" rel="stylesheet" type="text/css">
+
+		<!-- Custom styles for this template -->
+		<link href="{{ url_for('static', filename='styles/jumbotron.css') }}" rel="stylesheet" type="text/css">
+
+		<!-- JavaScript styles -->
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.8.0/Chart.min.js"></script>
+	</head>
+	<body>
+		<nav class="navbar navbar-toggleable-md navbar-inverse fixed-top bg-inverse">
+			<button class="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse" data-target="#navbarsExampleDefault" aria-controls="navbarsExampleDefault" aria-expanded="false" aria-label="Toggle navigation">
+				<span class="navbar-toggler-icon"></span>
+			</button>
+			<a class="navbar-brand" href="#">Amazon Product Reviews</a>
+			<div class="collapse navbar-collapse" id="navbarsExampleDefault">
+				<ul class="navbar-nav mr-auto">
+					<li class="nav-item active">
+						<a class="nav-link" href="#">Home <span class="sr-only">(current)</span></a>
+					</li>
+					<li class="nav-item">
+						<a class="nav-link" href="#">Link</a>
+					</li>
+					<li class="nav-item" align="right">
+						<a class="nav-link disabled" href="#">Disabled</a>
+					</li>
+				</ul>
+				<span class="navbar-text">
+					&copy; PA Consulting 2019
+				</span>
+			</div>
+		</nav>
+
+		<!-- Main jumbotron for a primary marketing message or call to action -->
+		<div class="jumbotron">
+			<div class="container">
+				<h1 class="display-3">Hi, what do you think?</h1>
+				<form action="" method="post" novalidate>
+					{{ text.hidden_tag() }}
+					<p>{% block content %}{% endblock content %}</p>
+					<p>Leave us a review and tell us what you think about our product! Based on your free-flowing input, we'll tell you the probability of the review you intended to leave (1-5 star grades). This information helps us design better products which meet your needs more closely, so thank you! </p>
+					<!-- <p><a class="btn btn-primary btn-lg" role="button">{{ text.submit() }}</a></p> -->
+					<p><a>{{ text.submit() }} </a></p>
+				</form>
+			</div>
+		</div>
+		<div class="container">
+			<!-- Example row of columns -->
+			<div class="row">
+				<div class="col-md-4">
+					<canvas id="barChart" width="1000" height="1000"></canvas>
+					<script>
+						var parseProbs = "{{ probs.values }}".replace('[', '').replace(']', '').split(",");
+var parseArgmax = "{{ probs.index }}".replace('[', '').replace(']', '').split(",");
+var result = parseProbs.map(Number);
+var parseArgmax = parseArgmax.map(Number);
+var colorPalette = ['#F25022', '#7FBA00', '#00A4EF', '#FFB900', '#737373']
+//var testVar = [0.1, 0.2, 0.3, 0.4, 0.5]
+//document.write(parseArgmax);
+
+let barChart = document.getElementById("barChart").getContext('2d');
+
+let reviewChart = new Chart(barChart, {
+	type: 'bar',
+	data: {
+		labels:['One', 'Two', 'Three', 'Four', 'Five'],
+		datasets:[{
+			data: result,
+			backgroundColor: colorPalette
+		}]
+	},
+	options: {
+		legend: {display: false},
+		title: {
+			display: true,
+			text: 'And the winner is...',
+			fontSize: 20,
+			fontStyle: 'italic'
+		},
+		responsive: true,
+		scales: {
+			yAxes: [{
+				ticks: {
+					beginAtZero: true
+					//min: 0,
+					//max: 1,
+					//stepSize: 0.20,
+				}
+			}],
+			xAxes: [{offset: true}]
+		}
+	}
+});
+
+var chartColors = {
+	color1: '#7fdb6a',
+	color2: '#0e68ce',
+	color3: '#eedc31',
+	color4: '#f44747',
+	color5: '#966842'
+}
+
+var dataset = reviewChart.data.datasets[0];
+
+for (var i = 0; i < parseArgmax.length; i++) {
+	if (parseArgmax[i] == '4'){
+		dataset.backgroundColor[i] = chartColors.color1;
+	}
+	else if (parseArgmax[i] == '3'){
+		dataset.backgroundColor[i] = chartColors.color2;
+	}
+	else if (parseArgmax[i] == '2'){ 
+		dataset.backgroundColor[i] = chartColors.color3;
+	}
+	else if (parseArgmax[i] == '1'){
+		dataset.backgroundColor[i] = chartColors.color4;
+	}
+	else{
+		dataset.backgroundColor[i] = chartColors.color5;
+	}
+}
+reviewChart.update()
+
+					</script>
+				</div>
+				<div class="col-md-4">
+					{% with messages = get_flashed_messages() %}
+					{% if messages %}
+					<ul class=flashes>
+						{% for message in messages %}
+						<li>{{ message }}</li>
+						{% endfor %}
+					</ul>
+					{% endif %}
+					{% endwith %}
+				</div>
+			</div>
+			<hr>
+			<footer>
+				<p>&copy; PA Consulting 2019</p>
+			</footer>
+		</div> <!-- /container -->
+</html>
+
